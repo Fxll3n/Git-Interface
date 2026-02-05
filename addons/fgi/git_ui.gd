@@ -59,8 +59,8 @@ func execute_git_command_async(args: Array, callback: Callable):
 	# New thread so that Editor doesn't freeze when awaiting command results
 	var thread = Thread.new()
 	thread.start(_run_git_async.bind(script_path, callback))
-	thread.wait_to_finish()
-	thread.free()
+	#thread.wait_to_finish()
+	#thread.free()
 
 func _run_git_async(script_path: String, callback: Callable):
 	var output = []
