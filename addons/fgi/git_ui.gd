@@ -54,7 +54,12 @@ func execute_git_command_async(args: Array, callback: Callable):
 	
 	# New thread so that Editor doesn't freeze when awaiting command results
 	var thread = Thread.new()
-	thread.start(_run_git_async.bind(script_path, callback))
+	
+	if thread.is_alive(): # Wait for thread if it hasn't finished
+		thread.wait_to_finish()
+
+	# Free the thread
+	thread.free()
 
 func _run_git_async(script_path: String, callback: Callable):
 	var output = []
@@ -107,6 +112,7 @@ func get_status_icon(status: String) -> String:
 
 func _on_commit_pressed():
 	var message = commit_message.text.strip_edges()
+	commit_message.text = ""
 	if message == "":
 		status_log.text = "[color=red][b]Error[/b][/color]: Commit message cannot be empty"
 		return
