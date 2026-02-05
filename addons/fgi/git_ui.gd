@@ -17,6 +17,10 @@ func _ready():
 	%Commit.pressed.connect(_on_commit_pressed)
 	%Pull.pressed.connect(_on_pull_pressed)
 	%Push.pressed.connect(_on_push_pressed)
+	%Credit.meta_clicked.connect(
+		func(meta):
+			OS.shell_open(str(meta))
+	)
 	
 	# Update periodicly.
 	add_child(refresh_timer)
@@ -54,11 +58,8 @@ func execute_git_command_async(args: Array, callback: Callable):
 	
 	# New thread so that Editor doesn't freeze when awaiting command results
 	var thread = Thread.new()
-	
-	if thread.is_alive(): # Wait for thread if it hasn't finished
-		thread.wait_to_finish()
-
-	# Free the thread
+	thread.start(_run_git_async.bind(script_path, callback))
+	thread.wait_to_finish()
 	thread.free()
 
 func _run_git_async(script_path: String, callback: Callable):

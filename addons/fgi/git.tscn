@@ -83,3 +83,12 @@ custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 bbcode_enabled = true
 text = "Branch: main"
+
+[node name="Credit" type="RichTextLabel" parent="VBoxContainer/TabContainer/Changes/VBoxContainer" unique_id=1665117723]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+bbcode_enabled = true
+text = "Made by: [url=\"https://godotengine.org/asset-library/asset?user=Fxll3n\"]Fxll3n[/url]"
+fit_content = true
+scroll_active = false
