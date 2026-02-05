@@ -4,6 +4,7 @@ extends Control
 @onready var file_tree: Tree = %FileList
 @onready var commit_message: TextEdit = %CommitMessage
 @onready var status_log: RichTextLabel = %Status
+@onready var refresh_timer: Timer = Timer.new()
 
 var git_executable = "git"
 var repo_path = ""
@@ -16,6 +17,17 @@ func _ready():
 	%Commit.pressed.connect(_on_commit_pressed)
 	%Pull.pressed.connect(_on_pull_pressed)
 	%Push.pressed.connect(_on_push_pressed)
+	
+	# Update periodicly.
+	add_child(refresh_timer)
+	refresh_timer.one_shot = true
+	refresh_timer.start(10)
+	refresh_timer.timeout.connect(
+		func():
+			refresh_status()
+			refresh_timer.start(10)
+	)
+
 
 func execute_git_command_sync(args: Array) -> Dictionary:
 	var output = []
@@ -63,7 +75,7 @@ func refresh_status():
 	var result = execute_git_command_sync(["status", "--porcelain"])
 	
 	if result.exit_code != 0:
-		status_log.text = "Error: Not a git repository or git not found"
+		status_log.text = "[color=red][b]Error[/b][/color]: Not a git repository or git not found"
 		return
 	
 	# Parse and display changes
@@ -83,7 +95,7 @@ func refresh_status():
 	
 	# Update status log
 	var branch_result = execute_git_command_sync(["branch", "--show-current"])
-	status_log.text = "Branch: " + branch_result.output.strip_edges()
+	status_log.text = "[b]Branch[/b]: " + branch_result.output.strip_edges()
 
 func get_status_icon(status: String) -> String:
 	match status.strip_edges():
@@ -96,13 +108,13 @@ func get_status_icon(status: String) -> String:
 func _on_commit_pressed():
 	var message = commit_message.text.strip_edges()
 	if message == "":
-		status_log.text = "Error: Commit message cannot be empty"
+		status_log.text = "[color=red][b]Error[/b][/color]: Commit message cannot be empty"
 		return
 	
 	# Stage all changes
 	var stage_result = execute_git_command_sync(["add", "-A"])
 	if stage_result.exit_code != 0:
-		status_log.text = "Error staging files:\n" + stage_result.output
+		status_log.text = "[color=red][b]Error[/b][/color] staging files:\n" + stage_result.output
 		return
 	
 	# Commit
@@ -110,7 +122,6 @@ func _on_commit_pressed():
 	status_log.text = commit_result.output
 	
 	if commit_result.exit_code == 0:
-		commit_message.text = ""
 		refresh_status()
 
 func _on_pull_pressed():
