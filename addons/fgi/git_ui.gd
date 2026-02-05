@@ -115,20 +115,20 @@ func _on_commit_pressed():
 
 func _on_pull_pressed():
 	status_log.text = "Pulling... (this may take a moment)"
-	$Toolbar/PullBtn.disabled = true
+	%Pull.disabled = true
 	
 	execute_git_command_async(["pull"], func(result):
 		status_log.text = result.output if result.output != "" else "Pull completed"
-		$Toolbar/PullBtn.disabled = false
+		%Pull.disabled = false
 		refresh_status()
 	)
 
 func _on_push_pressed():
 	status_log.text = "Pushing... (this may take a moment)"
-	$Toolbar/PushBtn.disabled = true
+	%Push.disabled = true
 	
 	execute_git_command_async(["push"], func(result):
 		status_log.text = result.output if result.output != "" else "Push completed"
-		$Toolbar/PushBtn.disabled = false
+		%Push.disabled = false
 		refresh_status()
 	)
