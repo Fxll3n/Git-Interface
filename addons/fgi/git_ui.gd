@@ -12,7 +12,6 @@ func _ready():
 	repo_path = ProjectSettings.globalize_path("res://")
 	refresh_status()
 	
-	# Connect buttons
 	%FetchChanges.pressed.connect(refresh_status)
 	%Commit.pressed.connect(_on_commit_pressed)
 	%Pull.pressed.connect(_on_pull_pressed)
@@ -20,7 +19,7 @@ func _ready():
 
 func execute_git_command_sync(args: Array) -> Dictionary:
 	var output = []
-	# Use working directory
+
 	var exit_code = OS.execute(git_executable, args, output, true, false)
 	
 	return {
@@ -28,9 +27,7 @@ func execute_git_command_sync(args: Array) -> Dictionary:
 		"output": "\n".join(output)
 	}
 
-# For potentially long operations (push, pull, fetch)
 func execute_git_command_async(args: Array, callback: Callable):
-	# Create a temporary script to handle the process
 	var script_path = "res://.godot/git_temp_command.sh" if OS.get_name() != "Windows" else "res://.godot/git_temp_command.bat"
 	var file = FileAccess.open(script_path, FileAccess.WRITE)
 	
@@ -40,11 +37,10 @@ func execute_git_command_async(args: Array, callback: Callable):
 		file.store_string("#!/bin/bash\ncd \"" + repo_path + "\"\ngit " + " ".join(args))
 	file.close()
 	
-	# Make executable on Unix
 	if OS.get_name() != "Windows":
 		OS.execute("chmod", ["+x", ProjectSettings.globalize_path(script_path)])
 	
-	# Create a thread to run the process
+	# New thread so that Editor doesn't freeze when awaiting command results
 	var thread = Thread.new()
 	thread.start(_run_git_async.bind(script_path, callback))
 

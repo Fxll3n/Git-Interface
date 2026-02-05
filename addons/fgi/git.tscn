@@ -79,7 +79,7 @@ text = "Commit"
 
 [node name="Status" type="RichTextLabel" parent="VBoxContainer/TabContainer/Commit/VBoxContainer" unique_id=1087869543]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 25)
+custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 bbcode_enabled = true
-text = "Error: Not a git repository or git not found"
+text = "Branch: main"
