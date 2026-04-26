@@ -4,7 +4,7 @@ extends EditorPlugin
 var path: String = ProjectSettings.globalize_path("res://")
 var dock: EditorDock
 
-func _enable_plugin() -> void:
+func _enter_tree() -> void:
 	dock = EditorDock.new()
 	dock.name = "Git"
 	dock.default_slot = EditorDock.DOCK_SLOT_LEFT_UR
@@ -13,6 +13,8 @@ func _enable_plugin() -> void:
 	add_dock(dock)
 
 
-func _disable_plugin() -> void:
-	remove_child(dock)
-	remove_dock(dock)
+func _exit_tree() -> void:
+	if dock != null:
+		remove_dock(dock)
+		dock.queue_free()
+		dock = null
