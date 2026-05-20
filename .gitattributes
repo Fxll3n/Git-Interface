@@ -1,2 +1,8 @@
-# Normalize EOL for all files that Git considers text files.
+# Thanks to @Gramps for this change! (Also I love your GodotSteam integration! It's really cool :D)
+# Normalize line endings for all files that Git considers text files.
 * text=auto eol=lf
+
+# Only include the addons folder when downloading from the Asset Library.
+/**        export-ignore
+/addons    !export-ignore
+/addons/** !export-ignore
